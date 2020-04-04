@@ -1,0 +1,17 @@
+
+
+#include <SDL2/SDL.h>
+
+#define INIT_TIMER          SDL_INIT_TIMER
+#define INIT_AUDIO          SDL_INIT_AUDIO
+#define INIT_VIDEO          SDL_INIT_VIDEO
+#define INIT_JOYSTICK       SDL_INIT_JOYSTICK
+#define INIT_HAPTIC         SDL_INIT_HAPTIC
+#define INIT_GAMECONTROLLER SDL_INIT_GAMECONTROLLER
+#define INIT_EVENTS         SDL_INIT_EVENTS
+#define INIT_EVERYTHING     SDL_INIT_EVERYTHING
+#define INIT_NOPARACHUTE    SDL_INIT_NOPARACHUTE
+
+void SystemInit(Uint32 flags){SDL_Init(flags);}//初始化各项功能
+
+
