@@ -6,9 +6,9 @@
 #include <stdarg.h>
 #include <string.h>
 
-void WriteTileMap(const char *path,TileMapInformation map_information,TileMapData map_data,int tile_count,...)
+void WriteTileMap(const char *path,TileMapInformation map_information,TileMapData map_data,short tile_count,...)
 {
-    int *image_path_char_n = (int*)calloc(tile_count,sizeof(int));//图片路径字符串大小
+    short *image_path_char_n = (short*)calloc(tile_count,sizeof(short));//图片路径字符串大小
     char *image_path[tile_count];//图片路径
 
     if(tile_count > 0)
@@ -37,11 +37,11 @@ void WriteTileMap(const char *path,TileMapInformation map_information,TileMapDat
     int i;
     for (i = 0; i < tile_count; i++)
     {
-        fwrite(&image_path_char_n[i],1,sizeof(int),fp);//写出瓦片图片路径字符
+        fwrite(&image_path_char_n[i],1,sizeof(short),fp);//写出瓦片图片路径字符
         fwrite(&image_path[i],1,sizeof(char) * image_path_char_n[i],fp);
     }
     
-    fwrite(map_data.data,sizeof(int),map_information.width * map_information.height,fp);
+    fwrite(map_data.data,sizeof(short),map_information.width * map_information.height,fp);
 
     fclose(fp);
 }
@@ -59,55 +59,36 @@ TileMap LoadTileMap(const char *path)
     fseek(fp,0L,SEEK_SET);//跳至第0字节处
     fread(&tile_map_information,1,sizeof(TileMapInformation),fp);//读入tile_map_information
 
-    tile_map_data.data = (int*)calloc(tile_map_information.width * tile_map_information.height,sizeof(int));
+    tile_map_data.data = (short*)malloc(tile_map_information.width * tile_map_information.height * sizeof(short));
 
-    fread(&tile_sets,1,sizeof(int),fp);//读入tile_count
+    fread(&tile_sets,1,sizeof(short),fp);//读入tile_count
 
     if(tile_sets.tile_count > 0)
     {
-        tile_sets.image_path_char_n = (int*)calloc(tile_sets.tile_count,sizeof(int));
-        tile_sets.image_path = (char**)calloc(tile_sets.tile_count,sizeof(char*));
+        tile_sets.tile_image_path = (char**)calloc(tile_sets.tile_count,sizeof(char*));
 
         int i;
         for (i = 0; i < tile_sets.tile_count; i++)
         {
-            fread(&tile_sets.image_path_char_n[i],1,sizeof(int),fp);
+            short image_path_char_n;
+            fread(&image_path_char_n,1,sizeof(short),fp);
 
-            tile_sets.image_path[i] = (char*)malloc(sizeof(char) * tile_sets.image_path_char_n[i]);
-            fread(&tile_sets.image_path[i],sizeof(char),tile_sets.image_path_char_n[i],fp);
+            tile_sets.tile_image_path[i] = (char*)malloc(sizeof(char) * image_path_char_n);
+            fread(&tile_sets.tile_image_path[i],sizeof(char),image_path_char_n,fp);
         }
     }
     
     int i;
     for (i = 0; i < tile_map_information.width * tile_map_information.height; i++)
     {
-        fread(&tile_map_data.data[i],1,sizeof(int),fp);
+        fread(&tile_map_data.data[i],1,sizeof(short),fp);
     }
 
     fclose(fp);
     
     tile_map.information = tile_map_information;
-
-    tile_map.tile_count = tile_sets.tile_count;
-    tile_map.map_data = tile_map_data.data;
-
-    tile_map.tile_image_path = (char**)malloc(sizeof(char*) * tile_map.tile_count);
-    for (i = 0; i < tile_map.tile_count; i++)
-    {
-        tile_map.tile_image_path[i] = tile_sets.image_path[i];
-    }
-    
-
-    /*
-    tile_map.tile_texture = (SDL_Texture**)malloc(sizeof(SDL_Texture) * tile_map.tile_count);
-    
-    for (i = 0; i < tile_map.tile_count; i++)
-    {
-        SDL_Surface *surface = IMG_Load(tile_sets.image_path[i]);
-        tile_map.tile_texture[i] = SDL_CreateTextureFromSurface(renderer->r,surface);
-        SDL_FreeSurface(surface);
-    }
-    */
+    tile_map.sets = tile_sets;
+    tile_map.map_data = tile_map_data;
 
     return tile_map;
 }

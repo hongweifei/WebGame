@@ -15,7 +15,7 @@ int main(int argc,char *argv[])
     TileMapInformation information = {60,19,32,32};
     TileMapData data;
 
-    data.data = (int*)calloc(100,sizeof(int));
+    data.data = (short*)calloc(60*19,sizeof(short));
 
     data.data[0] = 54;
     data.data[1] = 66;
@@ -31,16 +31,16 @@ int main(int argc,char *argv[])
     WriteTileMap("../map/map1",information,data,1,"../images/spr_wall_0.png");
     TileMap map = LoadTileMap("../map/map1");
 
-    printf("%d\n",map.tile_count);
+    printf("%d\n",map.sets.tile_count);
     int i;
     for (i = 0; i < map.information.tile_width * map.information.tile_height; i++)
     {
-        printf("%d\n",map.map_data[i]);
+        printf("%d\n",map.map_data.data[i]);
     }
     
-    for (i = 0; i < map.tile_count; i++)
+    for (i = 0; i < map.sets.tile_count; i++)
     {
-        printf("%s\n",map.tile_image_path[i]);
+        printf("%s\n",map.sets.tile_image_path[i]);
     }
 
     WindowMainLoop(window1);
