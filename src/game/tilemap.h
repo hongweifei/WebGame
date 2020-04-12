@@ -1,4 +1,4 @@
-
+﻿
 
 
 
@@ -7,10 +7,10 @@
 
 typedef struct
 {
-    short width;//地图宽，32bit，4byte，4字节
-    short height;//地图高，32bit，4byte，4字节
-    short tile_width;//瓦片宽，4字节
-    short tile_height;//瓦片高，4字节
+    short width;//地图宽，16bit，2byte，2字节
+    short height;//地图高，16bit，2byte，2字节
+    short tile_width;//瓦片宽，2字节
+    short tile_height;//瓦片高，2字节
 }TileMapInformation;
 
 typedef struct
